@@ -175,8 +175,12 @@ if (isStaffs) {
     return rand[Math.floor(Math.random()*rand.length)];
 }
 	case "8ball":
-    message.channel.send('Your anwser is: ' + random8Ball());
-	console.log(message.author.toString(), `used 8ball`)
+		 let params = encodeURIComponent(message.content.toString())
+		 let uri = 'https://8ball.delegator.com/magic/JSON/' + params
+		 fetch(uri)
+		  .then((response) => { return response.json() })
+		  .then((json) => { message.channel.send(json) })
+	        console.log(message.author.toString(), `used 8ball`)
  		break;
 	function coinflip() {
 	let result = Math.round(Math.random())
