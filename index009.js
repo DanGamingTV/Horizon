@@ -1,31 +1,29 @@
 const Discord = require("discord.js");
-const client = new Discord.Client();
+const bot = new Discord.Client();
 const prefix = ">"
 const package = require("./package.json");
-
-client.on("message", (message) => {
 //Copyright DanGamingTV 2017
-
-client.on("ready", () => {
+}
+bot.on("ready", () => {
   console.log(`Horizon has started!`)
-  //console.log(client.guilds) //(this shows all info about the guilds the bot is in)
-  //client.user.setGame(client.guilds.size + ' servers | ' + '>commands')
-  client.user.setActivity(`${client.guilds.size.toString()} servers`, {type: 'WATCHING'})
-  //client.guilds.forEach((key) => {
-  //key.owner.sendMessage('Hi there, thank you for inviting Horizon!')
-  //key.owner.sendMessage("Disclaimer: user activity such as command use is logged, so if you don't want that, please do not use Horizon.")
-  //console.log('done')
-//})
+  bot.guilds.forEach(async ga => {
+	console.log(`Bot Servercount: ${bot.guilds.size}\nBot Usercount:${bot.users.size}\nBot Channelcount:${bot.channels.size}`)
+  	console.log(`[SERVER] [${guild.memberCount}] ${guild.name} (${guild.id}) | Joined: ${bot.joinedAt.toString()}\n`)
+  })
+  bot.user.setActivity(`for >commands | ${bot.guilds.size} servers`, {type: 'WATCHING'})
+  bot.on("guildCreate", guild => {
+  	guild.owner.send("Heyo! Thanks for Inviting Horizon! This bot doesn't currently have many commands, but is in development!")
+  }) 
  
 });
 let ownerid = 242111808125534208
 let ownerid2 = '242111808125534208'
 
-client.on("message", message => {
-  let args = message.content.substring(prefix.length).split(" ");
-  if (message.author.equals(client.user)) return;
+bot.on("message", message => {
+  let args = message.content.split(" ").slice(0);
+  if (message.author.bot) return;
   if (!message.content.startsWith(prefix)) return;
-  if (message.channel.type !== 'text') return;
+  if (message.channel.type == "dm") return;
 
   switch (args[0].toLowerCase()) {
 //Utilities
@@ -63,7 +61,7 @@ case "ban":
   .setDescription('This command will only work if your role is named Owner, Admin, or Moderator')
   .addField('Usage','>banuser @User Reason')
   .setFooter("Horizon V2 (Ban Usage)","https://cdn.discordapp.com/avatars/344976644752015380/1d758cef2dff6795a904c91f06d2ca91.webp?size=128")
-  message.channel.sendEmbed(embed)
+  message.channel.send({ embed })
           break;
       case "banuser":
           if(message.channel.guild.id === '273169968202252289')return;
@@ -93,7 +91,7 @@ let reason = message.content.split(/\s+/g).slice(2).join(" ");
 .setDescription('This command will only work if your role is named Owner, Admin, or Moderator')
 .addField('Usage','>kickuser @User Reason')
 .setFooter("Horizon V2 (Kick Usage)","https://cdn.discordapp.com/avatars/344976644752015380/1d758cef2dff6795a904c91f06d2ca91.webp?size=128")
-message.channel.sendEmbed(embed)
+message.channel.send({ embed })
       break;
     case "kickuser":
     if(message.guild.id === '273169968202252289')return;
@@ -106,13 +104,13 @@ for (const id of staffRoleID) {
     }
 }
 if (isStaffs) {
-  let kickMember = message.guild.member(message.mentions.users.first());
+  let kickMember = message.mentions.members.first();
   let reason = message.content.split(/\s+/g).slice(2).join(" ");
-      message.guild.member(kickMember).kick(reason);
+      kickMember.kick(reason);
       message.channel.sendMessage(" " + message.author.toString() + " has kicked " + kickMember + " for the reason " + reason);
 	  console.log(message.author.toString(), ` kicked ` + kickMember + ` reason: ` + reason);
     } else {
-      return message.reply("You don\'t have the permissions to use this command!");
+      return message.reply("you don\'t have the permissions to use this command!");
 	  console.log(message.author.toString(), ` tried to kick ` + kickMember + ` but failed miserably.`);
     }
     break;
@@ -141,10 +139,10 @@ if (isStaffs) {
       console.log(message.author.toString(), `used invite`)
 		break;
   case "uptime":
-         let seconds = client.uptime / 1000 + ' seconds'
-         let minutes = client.uptime / 60000 + ' minutes'
-         let hours = client.uptime / 3600000 + ' hours'
-         let days = client.uptime / 86400000 + ' days'
+         let seconds = bot.uptime / 1000 + ' seconds'
+         let minutes = bot.uptime / 60000 + ' minutes'
+         let hours = bot.uptime / 3600000 + ' hours'
+         let days = bot.uptime / 86400000 + ' days'
          var embed = new Discord.RichEmbed()
          .setColor()
          .setTitle('Horizon Uptime')
@@ -164,8 +162,8 @@ if (isStaffs) {
       .addField('Owner','DangamingTV')
       .addField('API','Discord.js')
       .addField('Version', '2')
-	  .addField('Servers', client.guilds.size)
-      .addField('Uptime (MS)', client.uptime)
+	  .addField('Servers',  bot.guilds.size)
+      .addField('Uptime (MS)', bot.uptime)
 	  .addField('Check out the new commands!','>commands')
 	  .setFooter('Horizon V2')
 	  message.channel.sendEmbed(embed)
@@ -181,12 +179,13 @@ if (isStaffs) {
 	console.log(message.author.toString(), `used 8ball`)
  		break;
 	function coinflip() {
-	var rand = ['Heads!', 'Tails!', 'Heads!', 'Tails!','Heads!', 'Tails!','Heads!', 'Tails!',]
-	return rand[Math.floor(Math.random()*rand.length)];
+	let result = Math.round(Math.random())
+	if (result) message.channel.send("Heads!")
+    if (!result) message.channel.send("Tails!")
 }
 	case "coinflip":
     message.channel.send('We have, ' + coinflip());
-	console.log(message.author.toString(), `used coinflip`)
+	console.log(`${message.author.username} used coinflip`)
  		break;
 	function rpsFunc() {
 	var rand = ['Rock!', 'Paper','Scissors', 'Rock!', 'Paper','Scissors', 'Rock!', 'Paper','Scissors', 'Rock!', 'Paper','Scissors', 'Rock!', 'Paper','Scissors', ]
@@ -206,12 +205,14 @@ if (isStaffs) {
 		}
 		if (isOwnerrrr === true){
     	message.channel.send('Starting');
-    	client.user.setGame('Starting');
-    	client.user.setStatus('online');
-    	client.user.setGame('Online! | V1.0 | Please report any bugs to DanGamingTV#3643');
-		console.log(message.author.toString(), `used onlinebot`);
+    	bot.user.setGame('Starting');
+    	bot.user.setStatus('online');
+	setTimeout(() => {
+	   bot.user.setGame('Online! | V1.0 | Please report any bugs to <@216368711559413760>');
+	}, 1)
+    			console.log(`${message.author.username} used onlinebot`);
 		} else {
-			return message.reply("You don\'t have the permissions to use this command!");
+			return message.reply("you don't have the permissions to use this command!");
 		}
     		break;
     case "dndbot":
@@ -223,11 +224,11 @@ if (isStaffs) {
 		}
 		if (isOwnerr === true){
     	message.channel.send('Turning off Notifiers for Security');
-    	client.user.setStatus('dnd');
-    	client.user.setGame('Notifiers = Off');
-		console.log(message.author.toString(), `used dndbot`);
+    	bot.user.setStatus('dnd');
+    	bot.user.setActivity('Notifiers = Off', {type: "PLAYING"});
+		console.log(`${message.author.username} used dndbot`);
 		} else {
-			return message.reply("You don\'t have the permissions to use this command!");
+			return message.reply("You don't have the permissions to use this command!");
 		}
     		break;
     case "invisbot":
@@ -239,11 +240,11 @@ if (isStaffs) {
 		}
 		if (isOwner === true){
     	message.channel.send('Offline for updates!');
-    	client.user.setStatus('invisible');
-    	client.user.setGame('Offline for updates');
-		console.log(message.author.toString(), `used invisbot`);
+    	bot.user.setStatus('invisible');
+    	bot.user.setGame('Offline for updates');
+		console.log(message.author, `used invisbot`);
 		} else {
-			return message.reply("You don\'t have the permissions to use this command!");
+			return message.reply("you don't have the permissions to use this command!");
 		}
     		break;
 		case "idlebot":
@@ -255,11 +256,11 @@ if (isStaffs) {
 		}
 		if (isOwnerrr === true){
     	    	message.channel.send('Updating');
-    	client.user.setStatus('idle');
-    	client.user.setGame('Updating');
+    	bot.user.setStatus('idle');
+    	bot.user.setGame('Updating');
 		console.log(message.author.toString(), `used idlebot`);
 		} else {
-			return message.reply("You don\'t have the permissions to use this command!");
+			return message.reply("you don't have the permissions to use this command!");
 		}
     		break;
 //Help
@@ -283,5 +284,5 @@ if (isStaffs) {
    	  	break;
   }
 });
-});
-client.login("MzczMjQ2ODc0MTQ2MTc3MDI1.DNP8wg.5o1cdjQJ6TfU9hmBC0SAgKRsz6s");
+
+bot.login("MzczMjQ2ODc0MTQ2MTc3MDI1.DNP8wg.5o1cdjQJ6TfU9hmBC0SAgKRsz6s");
