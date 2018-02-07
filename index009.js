@@ -285,4 +285,4 @@ if (isStaffs) {
   }
 });
 
-bot.login("MzczMjQ2ODc0MTQ2MTc3MDI1.DNP8wg.5o1cdjQJ6TfU9hmBC0SAgKRsz6s");
+bot.login("");
