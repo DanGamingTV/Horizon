@@ -289,4 +289,4 @@ if (isStaffs) {
   }
 });
 
-bot.login("");
+bot.login(process.env.token);
